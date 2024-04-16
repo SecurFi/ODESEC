@@ -5,8 +5,7 @@ edition = "2021"
 default-run = "odsec"
 
 [dependencies]
-eyre = "0.6.8"
-x509-parser = { version = "0.16.0", features = ["verify"] }
+x509-parser = { version = "0.16.0" }
 alloy-primitives = { version = "0.6.2", default-features = false, features = [
     "rlp",
     "serde",
@@ -28,7 +27,7 @@ risc0-zkvm = { workspace = true, features = ["prove"] }
 serde = "1.0"
 tokio = { version = "1.23", features = ["full"] }
 tracing = { version = "0.1", features = ["log"] }
-
+guests = { path = "../guests" }
 
 [dev-dependencies]
 assert_cmd = "2.0"

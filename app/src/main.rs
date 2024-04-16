@@ -2,10 +2,10 @@
 use std::future::Future;
 use cert::CertArgs;
 use clap::{Parser, Subcommand};
-use eyre::EyreHandler;
-
+use anyhow::Result;
 mod cert;
 mod exploit;
+mod prover;
 use exploit::ExploitArgs;
 
 #[derive(Debug, Parser)]
@@ -18,7 +18,7 @@ struct Cli {
 #[derive(Debug, Subcommand)]
 enum Commands {
     Exploit(ExploitArgs),
-    // Cert(CertArgs),
+    Cert(CertArgs),
 }
 
 
@@ -28,11 +28,11 @@ pub fn block_on<F: Future>(future: F) -> F::Output {
 }
 
 
-fn main() -> eyre::Result<()> {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
         Commands::Exploit(args) => block_on(args.run()),
-        // Commands::Cert(args) => args.run().await,
+        Commands::Cert(args) => block_on(args.run()),
     }
 }
