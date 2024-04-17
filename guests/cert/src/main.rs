@@ -40,5 +40,5 @@ fn verify_certificate_domain(data: &[u8]) -> String {
 fn main() {
     let data: Vec<u8> = env::read();
     let domain = verify_certificate_domain(&data);
-    env::commit(&domain);
+    env::commit_slice(domain.as_bytes());
 }
