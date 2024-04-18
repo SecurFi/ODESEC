@@ -14,11 +14,14 @@
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.3.6",
+    "@ant-design/nextjs-registry": "^1.0.0",
     "@heroicons/react": "^2.0.11",
     "@rainbow-me/rainbowkit": "^2.0.2",
     "@tanstack/react-query": "^5.28.6",
     "@uniswap/sdk-core": "^4.0.1",
     "@uniswap/v2-sdk": "^3.0.1",
+    "antd": "^5.16.2",
     "blo": "^1.0.1",
     "daisyui": "4.5.0",
     "next": "^14.0.4",

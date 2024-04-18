@@ -7,9 +7,7 @@ pragma solidity >=0.8.0 <0.9.0;
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
 import {Strings} from "openzeppelin/contracts/utils/Strings.sol";
 
-import {Test, console2} from "forge-std/Test.sol";
-
-contract ODESEC is Test{
+contract ODESEC {
     IRiscZeroVerifier public verifier;
     /// @notice Image ID of the only zkVM binary to accept verification from.
     bytes32 public imageId;
@@ -17,6 +15,8 @@ contract ODESEC is Test{
     address public immutable owner;
     uint256 public totalProjects;
     bytes public constant MAGIC = "ODSEC";
+
+    event ProjectAdded(uint256 projectId, string domain, address owner);
 
     struct ProjectData {
         address owner;
@@ -46,7 +46,13 @@ contract ODESEC is Test{
         imageId = _imageId;
     }
 
-    function addProject(string memory _domain, string memory _contact, address[] _contracts, address _owner, bytes memory receipt) public {
+    function addProject(
+        string memory _domain,
+        string memory _contact,
+        address[] memory _contracts,
+        address _owner,
+        bytes memory receipt
+    ) public {
         (bytes memory journal, bytes32 postStateDigest, bytes memory seal) =
             abi.decode(receipt, (bytes, bytes32, bytes));
 
@@ -55,18 +61,14 @@ contract ODESEC is Test{
         require(projectIdOfDomain(_domain) == 0, "Project already exists");
         require(verifier.verify(seal, imageId, postStateDigest, sha256(journal)));
 
-        console2.log("journal: %s", string(journal));
         bytes20 challenge = makeChallenge(_domain, _owner);
         string memory challengeDomain = string.concat(challengeToHex(challenge), ".", _domain);
-        console2.log("challengeDomain: %s", challengeDomain);
         require(Strings.equal(challengeDomain, string(journal)), "Invalid Challenge");
-        
-        // require(journal == , "Invalid challenge");
-
         totalProjects += 1;
         uint256 projectId = totalProjects;
         projects[projectId] = ProjectData(_owner, _contracts, _domain, _contact);
         projectIds[keccak256(bytes(_domain))] = projectId;
+        emit ProjectAdded(projectId, _domain, _owner);
     }
 
     /**
@@ -86,6 +88,7 @@ contract ODESEC is Test{
     function getProjectList(uint256 limit, uint256 offset) public view returns (ProjectData[] memory) {
         uint256 count = limit > totalProjects - offset ? totalProjects - offset : limit;
         ProjectData[] memory _projects = new ProjectData[](count);
+        offset += 1;
         for (uint256 i = 0; i < count; i++) {
             _projects[i] = projects[offset + i];
         }

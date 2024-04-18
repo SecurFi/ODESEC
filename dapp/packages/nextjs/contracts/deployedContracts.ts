@@ -4,6 +4,1019 @@
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  31337: {
+    ODESEC: {
+      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_owner",
+              type: "address",
+            },
+            {
+              internalType: "contract IRiscZeroVerifier",
+              name: "_verifier",
+              type: "address",
+            },
+            {
+              internalType: "bytes32",
+              name: "_imageId",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "domain",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "ProjectAdded",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "MAGIC",
+          outputs: [
+            {
+              internalType: "bytes",
+              name: "",
+              type: "bytes",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_domain",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_contact",
+              type: "string",
+            },
+            {
+              internalType: "address[]",
+              name: "_contracts",
+              type: "address[]",
+            },
+            {
+              internalType: "address",
+              name: "_owner",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "receipt",
+              type: "bytes",
+            },
+          ],
+          name: "addProject",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "limit",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "offset",
+              type: "uint256",
+            },
+          ],
+          name: "getProjectList",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "address",
+                  name: "owner",
+                  type: "address",
+                },
+                {
+                  internalType: "address[]",
+                  name: "contracts",
+                  type: "address[]",
+                },
+                {
+                  internalType: "string",
+                  name: "domain",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "contact",
+                  type: "string",
+                },
+              ],
+              internalType: "struct ODESEC.ProjectData[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "imageId",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "domain",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "_owner",
+              type: "address",
+            },
+          ],
+          name: "makeChallenge",
+          outputs: [
+            {
+              internalType: "bytes20",
+              name: "",
+              type: "bytes20",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_domain",
+              type: "string",
+            },
+          ],
+          name: "projectIdOfDomain",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          name: "projectIds",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "projects",
+          outputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "domain",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "contact",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalProjects",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "_imageId",
+              type: "bytes32",
+            },
+          ],
+          name: "updateImageId",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "contact",
+              type: "string",
+            },
+            {
+              internalType: "address[]",
+              name: "contracts",
+              type: "address[]",
+            },
+          ],
+          name: "updateProject",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "verifier",
+          outputs: [
+            {
+              internalType: "contract IRiscZeroVerifier",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
+    SimpleVerifier: {
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      abi: [
+        {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [],
+          name: "CONTROL_ID_0",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "CONTROL_ID_1",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes",
+              name: "seal",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes32",
+              name: "imageId",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "postStateDigest",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "journalDigest",
+              type: "bytes32",
+            },
+          ],
+          name: "verify",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256[2]",
+              name: "_pA",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[2][2]",
+              name: "_pB",
+              type: "uint256[2][2]",
+            },
+            {
+              internalType: "uint256[2]",
+              name: "_pC",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[4]",
+              name: "_pubSignals",
+              type: "uint256[4]",
+            },
+          ],
+          name: "verifyProof",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              components: [
+                {
+                  internalType: "bytes",
+                  name: "seal",
+                  type: "bytes",
+                },
+                {
+                  components: [
+                    {
+                      internalType: "bytes32",
+                      name: "preStateDigest",
+                      type: "bytes32",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "postStateDigest",
+                      type: "bytes32",
+                    },
+                    {
+                      components: [
+                        {
+                          internalType: "enum SystemExitCode",
+                          name: "system",
+                          type: "uint8",
+                        },
+                        {
+                          internalType: "uint8",
+                          name: "user",
+                          type: "uint8",
+                        },
+                      ],
+                      internalType: "struct ExitCode",
+                      name: "exitCode",
+                      type: "tuple",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "input",
+                      type: "bytes32",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "output",
+                      type: "bytes32",
+                    },
+                  ],
+                  internalType: "struct ReceiptClaim",
+                  name: "claim",
+                  type: "tuple",
+                },
+              ],
+              internalType: "struct Receipt",
+              name: "receipt",
+              type: "tuple",
+            },
+          ],
+          name: "verify_integrity",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        CONTROL_ID_0: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+        CONTROL_ID_1: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+        verify: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+        verifyProof: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+        verify_integrity: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+      },
+    },
+  },
+  11155111: {
+    ODESEC: {
+      address: "0xb20d232d14428767b784c55879dc4E15Fe617c06",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_owner",
+              type: "address",
+            },
+            {
+              internalType: "contract IRiscZeroVerifier",
+              name: "_verifier",
+              type: "address",
+            },
+            {
+              internalType: "bytes32",
+              name: "_imageId",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "domain",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "ProjectAdded",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "MAGIC",
+          outputs: [
+            {
+              internalType: "bytes",
+              name: "",
+              type: "bytes",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_domain",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_contact",
+              type: "string",
+            },
+            {
+              internalType: "address[]",
+              name: "_contracts",
+              type: "address[]",
+            },
+            {
+              internalType: "address",
+              name: "_owner",
+              type: "address",
+            },
+            {
+              internalType: "bytes",
+              name: "receipt",
+              type: "bytes",
+            },
+          ],
+          name: "addProject",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "limit",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "offset",
+              type: "uint256",
+            },
+          ],
+          name: "getProjectList",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "address",
+                  name: "owner",
+                  type: "address",
+                },
+                {
+                  internalType: "address[]",
+                  name: "contracts",
+                  type: "address[]",
+                },
+                {
+                  internalType: "string",
+                  name: "domain",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "contact",
+                  type: "string",
+                },
+              ],
+              internalType: "struct ODESEC.ProjectData[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "imageId",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "domain",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "_owner",
+              type: "address",
+            },
+          ],
+          name: "makeChallenge",
+          outputs: [
+            {
+              internalType: "bytes20",
+              name: "",
+              type: "bytes20",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_domain",
+              type: "string",
+            },
+          ],
+          name: "projectIdOfDomain",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          name: "projectIds",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "projects",
+          outputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "domain",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "contact",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalProjects",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "_imageId",
+              type: "bytes32",
+            },
+          ],
+          name: "updateImageId",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "projectId",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "contact",
+              type: "string",
+            },
+            {
+              internalType: "address[]",
+              name: "contracts",
+              type: "address[]",
+            },
+          ],
+          name: "updateProject",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "verifier",
+          outputs: [
+            {
+              internalType: "contract IRiscZeroVerifier",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
+    SimpleVerifier: {
+      address: "0x5A5A08A118E11A4FE56D5c7cc752aAb7d45330f5",
+      abi: [
+        {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [],
+          name: "CONTROL_ID_0",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "CONTROL_ID_1",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes",
+              name: "seal",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes32",
+              name: "imageId",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "postStateDigest",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "journalDigest",
+              type: "bytes32",
+            },
+          ],
+          name: "verify",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256[2]",
+              name: "_pA",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[2][2]",
+              name: "_pB",
+              type: "uint256[2][2]",
+            },
+            {
+              internalType: "uint256[2]",
+              name: "_pC",
+              type: "uint256[2]",
+            },
+            {
+              internalType: "uint256[4]",
+              name: "_pubSignals",
+              type: "uint256[4]",
+            },
+          ],
+          name: "verifyProof",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              components: [
+                {
+                  internalType: "bytes",
+                  name: "seal",
+                  type: "bytes",
+                },
+                {
+                  components: [
+                    {
+                      internalType: "bytes32",
+                      name: "preStateDigest",
+                      type: "bytes32",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "postStateDigest",
+                      type: "bytes32",
+                    },
+                    {
+                      components: [
+                        {
+                          internalType: "enum SystemExitCode",
+                          name: "system",
+                          type: "uint8",
+                        },
+                        {
+                          internalType: "uint8",
+                          name: "user",
+                          type: "uint8",
+                        },
+                      ],
+                      internalType: "struct ExitCode",
+                      name: "exitCode",
+                      type: "tuple",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "input",
+                      type: "bytes32",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "output",
+                      type: "bytes32",
+                    },
+                  ],
+                  internalType: "struct ReceiptClaim",
+                  name: "claim",
+                  type: "tuple",
+                },
+              ],
+              internalType: "struct Receipt",
+              name: "receipt",
+              type: "tuple",
+            },
+          ],
+          name: "verify_integrity",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {
+        CONTROL_ID_0: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+        CONTROL_ID_1: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+        verify: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+        verifyProof: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+        verify_integrity: "risc0/groth16/RiscZeroGroth16Verifier.sol",
+      },
+    },
+  },
+} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;

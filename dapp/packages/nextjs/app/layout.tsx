@@ -1,5 +1,6 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { Metadata } from "next";
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
 import "~~/styles/globals.css";
@@ -9,8 +10,8 @@ const baseUrl = process.env.VERCEL_URL
   : `http://localhost:${process.env.PORT || 3000}`;
 const imageUrl = `${baseUrl}/thumbnail.jpg`;
 
-const title = "Scaffold-ETH 2 App";
-const titleTemplate = "%s | Scaffold-ETH 2";
+const title = "ODESEC";
+const titleTemplate = "%s | ODESEC";
 const description = "Built with 🏗 Scaffold-ETH 2";
 
 export const metadata: Metadata = {
@@ -50,9 +51,11 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <html suppressHydrationWarning>
       <body>
-        <ThemeProvider enableSystem>
-          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
-        </ThemeProvider>
+        <AntdRegistry>
+          <ThemeProvider enableSystem>
+            <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+          </ThemeProvider>
+        </AntdRegistry>
       </body>
     </html>
   );
