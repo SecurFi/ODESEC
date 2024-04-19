@@ -1,9 +1,9 @@
+use anyhow::{Context, Result};
 use ethers_core::types::Chain;
 use ethers_providers::{
     is_local_endpoint, Http, HttpRateLimitRetryPolicy, Middleware, Provider, RetryClient,
     RetryClientBuilder, DEFAULT_LOCAL_POLL_INTERVAL,
 };
-use eyre::WrapErr;
 use reqwest::{IntoUrl, Url};
 use std::{borrow::Cow, time::Duration};
 
@@ -22,7 +22,7 @@ pub fn get_http_provider(builder: impl Into<ProviderBuilder>) -> RetryProvider {
 
 /// Gives out a provider with a `100ms` interval poll if it's a localhost URL (most likely an anvil
 /// or other dev node) and with the default, `7s` if otherwise.
-pub fn try_get_http_provider(builder: impl Into<ProviderBuilder>) -> eyre::Result<RetryProvider> {
+pub fn try_get_http_provider(builder: impl Into<ProviderBuilder>) -> Result<RetryProvider> {
     builder.into().build()
 }
 
@@ -30,7 +30,7 @@ pub fn try_get_http_provider(builder: impl Into<ProviderBuilder>) -> eyre::Resul
 #[derive(Debug)]
 pub struct ProviderBuilder {
     // Note: this is a result, so we can easily chain builder calls
-    url: eyre::Result<Url>,
+    url: Result<Url>,
     chain: Chain,
     max_retry: u32,
     timeout_retry: u32,
@@ -53,7 +53,7 @@ impl ProviderBuilder {
         }
         let err = format!("Invalid provider url: {url_str}");
         Self {
-            url: url.into_url().wrap_err(err),
+            url: url.into_url().context(err),
             chain: Chain::Mainnet,
             max_retry: 100,
             timeout_retry: 5,
@@ -116,7 +116,7 @@ impl ProviderBuilder {
 
     /// Same as [`Self:build()`] but also retrieves the `chainId` in order to derive an appropriate
     /// interval
-    pub async fn connect(self) -> eyre::Result<RetryProvider> {
+    pub async fn connect(self) -> Result<RetryProvider> {
         let mut provider = self.build()?;
         if let Some(blocktime) = provider.get_chainid().await.ok().and_then(|id| {
             Chain::try_from(id)
@@ -129,7 +129,7 @@ impl ProviderBuilder {
     }
 
     /// Constructs the `RetryProvider` taking all configs into account
-    pub fn build(self) -> eyre::Result<RetryProvider> {
+    pub fn build(self) -> Result<RetryProvider> {
         let ProviderBuilder {
             url,
             chain,

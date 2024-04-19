@@ -1,7 +1,7 @@
 use alloy_primitives::B256;
 use bridge::trie::{MptNode, MptNodeReference, MptNodeData, EMPTY_ROOT};
 use hashbrown::HashMap;
-use eyre::{Result, bail};
+use anyhow::{Result, bail};
 
 /// Parses proof bytes into a vector of MPT nodes.
 pub fn parse_proof(proof: &[impl AsRef<[u8]>]) -> Result<Vec<MptNode>> {

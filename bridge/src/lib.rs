@@ -1,7 +1,7 @@
 use alloy_primitives::{Address, address, BlockHash, BlockNumber, Bloom, Bytes, bytes, B256, B64, U256, b256};
 use alloy_rlp_derive::RlpEncodable;
 use keccak::KECCAK_EMPTY;
-use revm::{Evm, primitives::{AccountInfo, Bytecode, SpecId, TxEnv, TransactTo, BlockEnv}, db::DatabaseRef};
+use revm::{Evm, primitives::{AccountInfo, Bytecode, SpecId, TransactTo}, db::DatabaseRef};
 use trie::{MptNode, StateAccount, EMPTY_ROOT};
 use core::{mem, panic};
 use std::collections::BTreeMap as Map;
@@ -27,7 +27,7 @@ pub struct Db {
 impl DatabaseRef for Db {
     type Error = ();
 
-    fn basic(&self, address:Address) -> Result<Option<AccountInfo> ,Self::Error>  {
+    fn basic_ref(&self, address:Address) -> Result<Option<AccountInfo> ,Self::Error>  {
         match self.accounts.get(&address) {
             Some(db_account) => Ok(Some(db_account.info.clone())),
             None => {
@@ -37,11 +37,11 @@ impl DatabaseRef for Db {
         }
     }
 
-    fn code_by_hash(&self, _code_hash:B256) -> Result<Bytecode,Self::Error>  {
+    fn code_by_hash_ref(&self, _code_hash:B256) -> Result<Bytecode,Self::Error>  {
         panic!()
     }
 
-    fn storage(&self, address:Address, index:U256) -> Result<U256,Self::Error>  {
+    fn storage_ref(&self, address:Address, index:U256) -> Result<U256,Self::Error>  {
         match self.accounts.get(&address) {
             Some(db_account) => match db_account.storage.get(&index) {
                 Some(value) => Ok(*value),
@@ -60,7 +60,7 @@ impl DatabaseRef for Db {
         }
     }
 
-    fn block_hash(&self, number:U256) -> Result<B256,Self::Error>  {
+    fn block_hash_ref(&self, number:U256) -> Result<B256,Self::Error>  {
         let block_no: u64 = number.try_into().unwrap();
         let entry = self.block_hashes.iter()
         .find(|(_block_no, _)| *_block_no == block_no);
@@ -182,8 +182,14 @@ impl Artifacts {
         
         B256::from_slice(hasher.finalize().as_slice())
     }
+
 }
 
+impl Default for Artifacts {
+    fn default() -> Self {
+        Self { storage: Default::default(), initial_balance: Default::default() }
+    }
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct VmInput {
@@ -204,7 +210,7 @@ pub struct Diff<T> {
     pub new: T,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct StateDiff {
     pub balance: Option<Diff<U256>>,
     pub storage: Map<U256, Diff<U256>>,
@@ -414,34 +420,30 @@ pub fn execute_vm(mut input: VmInput) -> VmOutput {
 
     let spec_id = get_specId_from_block_number(input.header.number);
     let mut evm = Evm::builder()
-        .with_db(db)
+        .with_ref_db(db)
         .with_spec_id(spec_id)
-
-    evm.database(db);
-    evm.env.tx = TxEnv {
-        caller: DEFAULT_CALLER,
-        transact_to: TransactTo::Call(DEFAULT_CONTRACT_ADDRESS),
-        data: DEFAULT_CALL_DATA,
-        value: U256::ZERO,
-        ..Default::default()
-    };
-    evm.env.block = BlockEnv {
-        number: U256::from(input.header.number),
-        timestamp: U256::from(input.header.timestamp),
-        ..Default::default()
-    };
-    evm.env.cfg.spec_id = get_specId_from_block_number(input.header.number);
-    
-    let result_and_state = evm.transact_ref().unwrap();
+        .modify_block_env(|block_env| {
+            block_env.number = U256::from(input.header.number);
+            block_env.timestamp = U256::from(input.header.timestamp);
+        })
+        .modify_tx_env(|tx| {
+            tx.caller = DEFAULT_CALLER;
+            tx.transact_to = TransactTo::Call(DEFAULT_CONTRACT_ADDRESS);
+            tx.data = DEFAULT_CALL_DATA;
+            tx.value = U256::ZERO;
+        })
+        .build();
+ 
+    let result_and_state = evm.transact().unwrap();
     if !result_and_state.result.is_success() {
         panic!()
     }
-
-    let old_db = evm.take_db();
+    
+    let old_db = evm.context.evm.db;
     let mut state_diff = Map::new();
 
     for (address, account) in result_and_state.state {
-        let old_balance = old_db.accounts.get(&address).map(|a|a.info.balance).unwrap_or(U256::ZERO);
+        let old_balance = old_db.0.accounts.get(&address).map(|a|a.info.balance).unwrap_or(U256::ZERO);
         let new_balance = if account.is_selfdestructed() {
             U256::ZERO
         } else {
@@ -461,7 +463,7 @@ pub fn execute_vm(mut input: VmInput) -> VmOutput {
             if !sslot.is_changed() {
                 continue;
             }
-            let old_value = old_db.accounts.get(&address).map(|x| x.storage.get(&key).unwrap_or(&U256::ZERO).clone()).unwrap_or(U256::ZERO);
+            let old_value = old_db.0.accounts.get(&address).map(|x| x.storage.get(&key).unwrap_or(&U256::ZERO).clone()).unwrap_or(U256::ZERO);
             let new_value = sslot.present_value;
             if new_balance!= old_value {
                 storage_state.insert(key, Diff { old: old_value, new: new_value });

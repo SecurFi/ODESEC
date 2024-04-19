@@ -29,11 +29,8 @@ impl CertArgs {
             data = pem.contents
         }
         x509_parser::parse_x509_certificate(&data)?;
-        let time = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap();
-        let profile_ref = format!("{}_run", time.as_secs());
-        let journal = execute(&data, 20, false, CERT_ELF, &profile_ref);
+
+        let journal = execute(&data, 20, false, CERT_ELF, None);
         // let domain: Vec<u8> = journal.decode()?;
         let domain = String::from_utf8(journal.bytes)?;
         println!("domain: {}", domain);

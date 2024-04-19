@@ -1,8 +1,8 @@
 use bridge::{BlockHeader, StorageEntry, DEFAULT_CONTRACT_ADDRESS, DEFAULT_CALLER};
 use bridge::trie::{MptNode, };
 use ethers_providers::Middleware;
-use ethers_core::types::{H256, Bytes as EBytes, StorageProof};
-use eyre::{Result, Context, ContextCompat};
+use ethers_core::types::{H256, U256 as EthersU256, Bytes as EBytes, StorageProof};
+use anyhow::{Result, Context};
 use log::{debug, warn};
 use std::collections::BTreeMap as Map;
 use hashbrown::{HashMap, HashSet};
@@ -46,13 +46,13 @@ impl PartialEq for BlockchainDbMeta {
 #[derive(Debug, thiserror::Error)]
 pub enum DbError {
     #[error("Failed to get account for {0:?}: {0:?}")]
-    GetAccount(Address, eyre::Error),
+    GetAccount(Address, anyhow::Error),
     #[error("Failed to get storage for {0:?} at {1:?}: {2:?}")]
-    GetStorage(Address, U256, eyre::Error),
+    GetStorage(Address, U256, anyhow::Error),
     #[error("Failed to get block hash for {0}: {1:?}")]
-    GetBlockHash(u64, eyre::Error),
+    GetBlockHash(u64, anyhow::Error),
     #[error(transparent)]
-    Custom(#[from] eyre::Error),
+    Custom(#[from] anyhow::Error),
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -153,7 +153,7 @@ impl<'a, M: Middleware + 'static> JsonBlockCacheDB<'a, M> {
     }
 
     pub fn get_proof(&self, address: Address, indices: &[U256]) -> Result<AccountProof> {
-        let locations: Vec<H256> = indices.iter().map(|k| k.to_be_bytes().into()).collect::<Vec<_>>();
+        let locations: Vec<EthersU256> = indices.iter().map(|k| k.to_ethers()).collect::<Vec<_>>();
 
         let mut cache_data = self.data.borrow_mut();
         let block_id = Some(cache_data.meta.header.number.into());
@@ -165,7 +165,8 @@ impl<'a, M: Middleware + 'static> JsonBlockCacheDB<'a, M> {
         if keys_not_in_cache.len() > 0 || !cache_data.account_proofs.contains_key(&address) {
             debug!("get proof from rpc: {:#x}, {:#?}", address, keys_not_in_cache);
             let resp = self.tokio_handle.block_on(async {
-                self.provider.get_proof(address.to_ethers(), keys_not_in_cache, block_id).await
+                let locs: Vec<H256> = keys_not_in_cache.iter().map(|k| k.to_alloy().to_be_bytes().into()).collect();
+                self.provider.get_proof(address.to_ethers(), locs, block_id).await
             })?;
 
             let entry = cache_data.account_proofs.entry(address.clone()).or_default();
@@ -193,7 +194,7 @@ where
     M::Error: 'static,
 {
     type Error = DbError;
-    fn basic(&self, address: Address) -> Result<Option<AccountInfo>, Self::Error> {        
+    fn basic_ref(&self, address: Address) -> Result<Option<AccountInfo>, Self::Error> {        
         match self.data.borrow().accounts.get(&address) {
             Some(account) => return Ok(Some(account.clone())),
             None => {}
@@ -209,7 +210,7 @@ where
                 let code = self.provider.get_code(address, block_id);
                 tokio::try_join!(balance, nonce, code)
             })
-            .map_err(|err| DbError::GetAccount(address, eyre::Error::new(err)))?;
+            .map_err(|err| DbError::GetAccount(address, anyhow::Error::new(err)))?;
         let bytecode = Bytecode::new_raw(code.0.into());
         let account_info = AccountInfo::new(
             balance.to_alloy(),
@@ -224,7 +225,7 @@ where
         Ok(Some(account_info))
     }
 
-    fn storage(&self, address: Address, index: U256) -> Result<U256, Self::Error> {        
+    fn storage_ref(&self, address: Address, index: U256) -> Result<U256, Self::Error> {        
         let value = self
             .data
             .borrow()
@@ -246,7 +247,7 @@ where
                 let storage = storage.map(|v| U256::from_be_bytes(v.to_fixed_bytes()));
                 storage
             })
-            .map_err(|err| DbError::GetStorage(address, index, eyre::Error::new(err)))?;
+            .map_err(|err| DbError::GetStorage(address, index, anyhow::Error::new(err)))?;
         self.data
             .borrow_mut()
             .storage
@@ -256,7 +257,7 @@ where
         Ok(data)
     }
 
-    fn block_hash(&self, number: U256) -> Result<B256, Self::Error> {
+    fn block_hash_ref(&self, number: U256) -> Result<B256, Self::Error> {
         let block_number = u64::try_from(number).unwrap();
         match self.data.borrow().block_hashes.get(&block_number) {
             Some(hash) => return Ok(*hash),
@@ -270,7 +271,7 @@ where
                 // block?.hash.unwrap()
                 block
             })
-            .map_err(|err| DbError::GetBlockHash(block_number, eyre::Error::new(err)))?;
+            .map_err(|err| DbError::GetBlockHash(block_number, anyhow::Error::new(err)))?;
         let hash = block.unwrap().hash.unwrap().to_alloy();
         self.data
             .borrow_mut()
@@ -279,7 +280,7 @@ where
         Ok(hash)
     }
 
-    fn code_by_hash(&self, _code_hash: B256) -> Result<Bytecode, Self::Error> {
+    fn code_by_hash_ref(&self, _code_hash: B256) -> Result<Bytecode, Self::Error> {
         unreachable!()
     }
 }
@@ -338,8 +339,8 @@ impl<'a, M: Middleware + 'static> ProxyDb<'a, M> {
             if skip_addrs.contains(&address) {
                 continue;
             }
-            let info = cache_data.accounts.get(&address).wrap_err("missing account")?;
-            let code = info.code.clone().wrap_err("missing code")?;
+            let info = cache_data.accounts.get(&address).context("missing account")?;
+            let code = info.code.clone().context("missing code")?;
             if !code.is_empty() {
                 contracts.insert(code.bytecode);
             }
@@ -408,10 +409,10 @@ impl<'a, M: Middleware + 'static> Database for ProxyDb<'a, M> {
         self.trace_basic.push(address);
         let info = match self.hook_accounts.get(&address) {
             Some(info) => {
-                self.db.basic(address)?;
+                self.db.basic_ref(address)?;
                 Some(info.clone())
             },
-            None => self.db.basic(address)?,
+            None => self.db.basic_ref(address)?,
         };
         Ok(info)
     }
@@ -424,17 +425,17 @@ impl<'a, M: Middleware + 'static> Database for ProxyDb<'a, M> {
         self.trace_storage.push((address, index));
         let value = match self.hook_storage.get(&address).and_then(|s| s.get(&index)) {
             Some(value) => {
-                self.db.storage(address, index)?;
+                self.db.storage_ref(address, index)?;
                 *value
             },
-            None => self.db.storage(address, index)?
+            None => self.db.storage_ref(address, index)?
         };
         Ok(value)
     }
 
     fn block_hash(&mut self, number:U256) -> Result<B256, Self::Error>  {
         self.trace_block_hashes.push(number);
-        self.db.block_hash(number)
+        self.db.block_hash_ref(number)
     }
 }
 
@@ -458,10 +459,10 @@ mod tests {
         meta.header.number = 18400000u64;
         let db = JsonBlockCacheDB::new(&provider, meta, None);
         let address = address!("c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2");
-        let account = db.basic(address).unwrap().unwrap();
+        let account = db.basic_ref(address).unwrap().unwrap();
         println!("account: {:?}, balance: {}", account, account.balance);
         for i in 0..5 {
-            let storage = db.storage(address, U256::from(i)).unwrap();
+            let storage = db.storage_ref(address, U256::from(i)).unwrap();
             println!("storage: {:?}, index: {}", storage, i);
         }
     }

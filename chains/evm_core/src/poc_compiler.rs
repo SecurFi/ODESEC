@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use eyre::{bail, Result};
+use anyhow::{bail, Result};
 use revm::primitives::Bytecode;
 use foundry_compilers::{Project, Solc, artifacts::Settings, EvmVersion, SolcConfig};
 

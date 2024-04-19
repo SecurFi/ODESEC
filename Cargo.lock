@@ -943,18 +943,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "chains-evm"
+name = "chains-evm-core"
 version = "0.1.0"
 dependencies = [
  "alloy-dyn-abi",
  "alloy-json-abi",
  "alloy-primitives",
  "alloy-sol-types",
+ "anyhow",
  "bridge",
  "bytes",
  "ethers-core",
  "ethers-providers",
- "eyre",
  "foundry-compilers",
  "futures",
  "hashbrown 0.14.3",
@@ -3077,12 +3077,15 @@ dependencies = [
  "assert_cmd",
  "bincode",
  "bonsai-sdk",
+ "bridge",
  "bytemuck",
- "chains-evm",
+ "chains-evm-core",
  "clap",
  "clio",
+ "dirs-next",
  "env_logger",
  "ethers-core",
+ "ethers-providers",
  "guests",
  "hex",
  "log",
@@ -3091,6 +3094,7 @@ dependencies = [
  "risc0-zkvm",
  "rstest",
  "serde",
+ "serde_json",
  "tokio",
  "tracing",
  "x509-parser",

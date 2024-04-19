@@ -1,4 +1,4 @@
-use eyre::{Result, bail};
+use anyhow::{Result, bail};
 #[cfg(not(target_arch = "wasm32"))]
 use tokio::runtime::{Handle, Runtime};
 use crate::evm_primitives::U256;

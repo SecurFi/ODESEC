@@ -1,5 +1,4 @@
-// ref https://github.com/risc0/zeth/blob/main/host/src/main.rs
-use std::{fmt::Debug, time::Duration};
+use std::time::Duration;
 use anyhow::{Result, bail, Context};
 use log::{debug, error, info};
 use risc0_zkvm::{
@@ -8,7 +7,7 @@ use risc0_zkvm::{
 use bonsai_sdk::alpha as bonsai_sdk;
 use risc0_ethereum_contracts::groth16::Seal;
 use ethers_core::abi::Token;
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 
 pub fn prove_bonsai(
@@ -214,7 +213,7 @@ pub fn execute<T: Serialize>(
     segment_limit_po2: u32,
     profile: bool,
     elf: &[u8],
-    profile_reference: &String,
+    profile_reference: Option<&String>,
 ) -> Journal {
     debug!(
         "Running in executor with segment_limit_po2 = {:?}",
@@ -238,7 +237,7 @@ pub fn execute<T: Serialize>(
 
         if profile {
             info!("Profiling enabled.");
-            env_builder.enable_profiler(format!("profile_{}.pb", profile_reference));
+            env_builder.enable_profiler(format!("profile_{}.pb", profile_reference.unwrap()));
         }
 
         let env = env_builder.build().unwrap();
