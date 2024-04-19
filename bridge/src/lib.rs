@@ -126,6 +126,12 @@ pub struct BlockHeader {
     pub base_fee_per_gas: U256,
     /// Withdrawals root hash (if past Shanghai)
     pub withdrawals_root: Option<B256>,
+    /// Blob gas used (if past Cancun)
+    pub blob_gas_used: Option<U256>,
+    /// Excess blob gas (if past Cancun)
+    pub excess_blob_gas: Option<U256>,
+    /// Parent beacon block root (if past Cancun)
+    pub parent_beacon_block_root: Option<B256>,
 }
 
 impl Default for BlockHeader {
@@ -148,6 +154,9 @@ impl Default for BlockHeader {
             nonce: B64::ZERO,
             base_fee_per_gas: U256::ZERO,
             withdrawals_root: None,
+            blob_gas_used: None,
+            excess_blob_gas: None,
+            parent_beacon_block_root: None,
         }
     }
 }
@@ -465,7 +474,7 @@ pub fn execute_vm(mut input: VmInput) -> VmOutput {
             }
             let old_value = old_db.0.accounts.get(&address).map(|x| x.storage.get(&key).unwrap_or(&U256::ZERO).clone()).unwrap_or(U256::ZERO);
             let new_value = sslot.present_value;
-            if new_balance!= old_value {
+            if new_value != old_value {
                 storage_state.insert(key, Diff { old: old_value, new: new_value });
             }
         }
