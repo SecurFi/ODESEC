@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["app", "guests"]
+members = ["app", "guests", "bridge", "chains/evm",]
 
 # Always optimize; building and running the guest takes much longer without optimization.
 [profile.dev]
@@ -24,5 +24,4 @@ revm-primitives = { version = "2.0", default_features = false }
 revm = { version = "5.0", default-features = false, features = [
     "std",
     "serde",
-    "optimism",
 ] }
