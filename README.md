@@ -2,9 +2,32 @@
 On-chain Database of Emergency Security Event Contact, Whitehat is able to quickly establish a connection with the protocol
 
 
-## Certificate Apply
+## Get ssl Certificate
 https://github.com/srvrco/getssl
 
+## Generate the SNARK Proof of the Certificate
+Setup environment, Using the [Bonsai](https://dev.risczero.com/api/generating-proofs/remote-proving) proving service.
+```bash
+export BONSAI_API_KEY=<your-api-key>
+export BONSAI_API_URI=<bonsai_url> # now is https://api.bonsai.xyz/
+```
+Now, you can run the cli to generate the proof.
+```bash
+cargo run  -- cert -p -c <your-certificate-file>
+```
+
+## Generate the zkp of the POC
+1. Write your own poc file like [POC template](https://github.com/0xHackedLabs/PoC)
+2. Run the cli to generate the proof.
+```bash
+cargo run -r  -- exploit -r <rpc_url> <your-poc-file>
+```
+
+## Running the Frontend Locally
+```bash
+cd dapp
+yarn start
+```
 
 ## Thanks
 - [risc0](https://github.com/risc0/risc0)
