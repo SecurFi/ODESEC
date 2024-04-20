@@ -55,13 +55,14 @@ Welcome to ODESEC bot!
 
 You can send me a proof file and I will verify it for you.
 
-Your Id is: {uid}
+Your contact info is: {contact}
 """
 
 @bot.message_handler(commands=['start', 'help',])
 async def send_welcome(message):
     # print("commands: ", message)
-    msg = welcome_message.replace("{uid}", str(message.chat.id))
+    contact = "tg:{}/{}".format(BOT_ID, message.chat.id)
+    msg = welcome_message.replace("{contact}", str(contact))
     bot.reply_to(message, msg)
 
 
