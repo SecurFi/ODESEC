@@ -1,5 +1,5 @@
 # ODESEC
-On-chain Database of Emergency Security Event Contact, Whitehat is able to quickly establish a connection with the protocol
+ODESEC stands for On-chain Database of Emergency Security Event Contact. Through this database and the corresponding mechanism, project teams can filter out spam, quickly receive effective emergency vulnerability reports, and make timely responses.
 
 
 ## Get ssl Certificate
