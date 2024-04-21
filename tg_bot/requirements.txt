@@ -1,0 +1,4 @@
+pytelegrambotapi
+aiohttp
+aioschedule
+web3
