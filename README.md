@@ -25,7 +25,7 @@ cargo run -r  -- exploit -r <rpc_url> <your-poc-file>
 ### example
 There are two example contracts deployed on the sepolia network
 - [MockUSDC](./dapp/packages/hardhat/contracts/mock/MockUSDC.sol) **0x190CaCC70Ba6C8696b6144D67Acf4F5BEE77f713**
-- [Target Contract](./dapp/packages/hardhat/contracts/mock/TargetLoan.sol) **0xD856e309337dea0D14001C2853D23c9a2e384f8D**
+- [Victim Contract](./dapp/packages/hardhat/contracts/mock/TargetLoan.sol) **0xD856e309337dea0D14001C2853D23c9a2e384f8D**
 ```bash
 RUST_LOG=INFO cargo run -r  -- exploit -r https://eth-sepolia.g.alchemy.com/v2/PwB1oLC0AVk2wiLTAzskCYGoOGm65bsn -p poc.sol
 ```
