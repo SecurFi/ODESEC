@@ -24,7 +24,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   await deploy("MockUSDC", { from: deployer, log: true });
 
-  const { address: verifierAddress } = await hre.deployments.get("MockUSDC");
+  // const { address: verifierAddress } = await hre.deployments.get("MockUSDC");
 
   await deploy("TargetLoan", {
     from: deployer,
@@ -35,7 +35,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
+  const { address: TargetLoanAddress } = await hre.deployments.get("TargetLoan");
+  const MockUSDC = await hre.ethers.getContract<Contract>("MockUSDC", deployer);
 
+  await MockUSDC.transfer(TargetLoanAddress, 6 * 1000000);
+
+  console.log("USDC balance of targetLoan: ", await MockUSDC.balanceOf(TargetLoanAddress));
   // Get the deployed contract to interact with it after deploying.
   // const yourContract = await hre.ethers.getContract<Contract>("YourContract", deployer);
   // console.log("👋 Initial greeting:", await yourContract.greeting());

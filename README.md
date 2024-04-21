@@ -13,7 +13,7 @@ export BONSAI_API_URI=<bonsai_url> # now is https://api.bonsai.xyz/
 ```
 Now, you can run the cli to generate the proof.
 ```bash
-cargo run  -- cert -p -c <your-certificate-file>
+RUST_LOG=INFO cargo run -r -- cert -p -c <your-certificate-file>
 ```
 
 ## Generate the zkp of the POC
@@ -27,7 +27,7 @@ There are two example contracts deployed on the sepolia network
 - [MockUSDC](./dapp/packages/hardhat/contracts/mock/MockUSDC.sol) **0x190CaCC70Ba6C8696b6144D67Acf4F5BEE77f713**
 - [Target Contract](./dapp/packages/hardhat/contracts/mock/TargetLoan.sol) **0xD856e309337dea0D14001C2853D23c9a2e384f8D**
 ```bash
-RUST_LOG=INFO cargo run -r  -- exploit -r https://eth-sepolia.g.alchemy.com/v2/PwB1oLC0AVk2wiLTAzskCYGoOGm65bsn -p -b 5731506 poc.sol
+RUST_LOG=INFO cargo run -r  -- exploit -r https://eth-sepolia.g.alchemy.com/v2/PwB1oLC0AVk2wiLTAzskCYGoOGm65bsn -p poc.sol
 ```
 ## Running the Frontend Locally
 ```bash
